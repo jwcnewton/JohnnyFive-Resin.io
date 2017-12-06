@@ -4,8 +4,25 @@
 # Note the node:slim image doesn't have node-gyp
 FROM resin/%%RESIN_MACHINE_NAME%%-node:6-slim
 
+# Enable systemd init system in container
+ENV INITSYSTEM on
+
+RUN apt-get update \
+    && apt-get install -y dnsmasq \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN mkdir -p /usr/src/app/
+
 # Defines our working directory in container
 WORKDIR /usr/src/app
+
+RUN curl https://api.github.com/repos/resin-io/resin-wifi-connect/releases/latest -s \
+    | grep -hoP 'browser_download_url": "\K.*%%RESIN_ARCH%%\.tar\.gz' \
+    | xargs -n1 curl -Ls \
+    | tar -xvz -C /usr/src/app/
+
+COPY start .
 
 COPY package.json package.json
 
@@ -13,7 +30,4 @@ RUN JOBS=MAX npm install --production --unsafe-perm && npm cache clean && rm -rf
 
 COPY . ./
 
-# Enable systemd init system in container
-ENV INITSYSTEM on
-
-CMD ["npm", "start"]
+CMD ["bash", "npm", "start"]
