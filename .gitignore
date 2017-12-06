@@ -57,3 +57,5 @@ typings/
 # dotenv environment variables file
 .env
 
+# AWS c9
+.c9/
