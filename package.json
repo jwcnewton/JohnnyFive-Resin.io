@@ -4,7 +4,8 @@
   "description": "Johnny-Five + resin.io",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "prestart": "npm install"
   },
   "keywords": [
     "nodejs",
